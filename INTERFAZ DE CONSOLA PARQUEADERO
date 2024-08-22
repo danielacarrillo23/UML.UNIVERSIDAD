@@ -1,0 +1,140 @@
+from datetime import datetime
+
+class Vehiculo:
+    def __init__(self, placa, marca, modelo, hora_entrada):
+        self.placa = placa
+        self.marca = marca
+        self.modelo = modelo
+        self.hora_entrada = hora_entrada
+
+    def GetPlaca(self):
+        return self.placa
+
+    def GetMarca(self):
+        return self.marca
+
+    def GetModelo(self):
+        return self.modelo
+
+    def GetHoraEntrada(self):
+        return self.hora_entrada
+
+class Camion(Vehiculo):
+    def __init__(self, placa, marca, modelo, hora_entrada, capacidad_carga):
+        super().__init__(placa, marca, modelo, hora_entrada)
+        self.capacidad_carga = capacidad_carga
+
+    def GetCapacidadCarga(self):
+        return self.capacidad_carga
+
+class Automovil(Vehiculo):
+    def __init__(self, placa, marca, modelo, hora_entrada, tipo_combustible):
+        super().__init__(placa, marca, modelo, hora_entrada)
+        self.tipo_combustible = tipo_combustible
+
+    def GetTipoCombustible(self):
+        return self.tipo_combustible
+
+class Motocicleta(Vehiculo):
+    def __init__(self, placa, marca, modelo, hora_entrada, cilindraje):
+        super().__init__(placa, marca, modelo, hora_entrada)
+        self.cilindraje = cilindraje
+
+    def GetCilindraje(self):
+        return self.cilindraje
+
+class Parqueadero:
+    def __init__(self):
+        self.vehiculos = []
+        self.historial = []  # Para almacenar los vehículos que han usado el parqueadero
+
+    def RegistrarEntrada(self, vehiculo):
+        self.vehiculos.append(vehiculo)
+        self.historial.append(vehiculo)  # Añadimos al historial
+        print(f"Vehículo con placa {vehiculo.GetPlaca()} registrado a las {vehiculo.GetHoraEntrada()}")
+
+    def RegistrarSalida(self, placa):
+        vehiculo_encontrado = None
+        for vehiculo in self.vehiculos:
+            if vehiculo.GetPlaca() == placa:
+                vehiculo_encontrado = vehiculo
+                break
+        if vehiculo_encontrado:
+            self.vehiculos.remove(vehiculo_encontrado)
+            print(f"Vehículo con placa {placa} ha salido del parqueadero.")
+        else:
+            print(f"Error: No se encontró un vehículo con la placa {placa} en el parqueadero.")
+
+    def ConsultarEstado(self):
+        if not self.vehiculos:
+            print("No hay vehículos en el parqueadero.")
+        else:
+            print("Vehículos en el parqueadero:")
+            for vehiculo in self.vehiculos:
+                print(f"Placa: {vehiculo.GetPlaca()}, Marca: {vehiculo.GetMarca()}, Modelo: {vehiculo.GetModelo()}, Hora de Entrada: {vehiculo.GetHoraEntrada()}")
+
+    def GenerarReporte(self):
+        print("\n--- Reporte del Día ---")
+        if not self.historial:
+            print("No se registraron vehículos hoy.")
+        else:
+            for vehiculo in self.historial:
+                print(f"Placa: {vehiculo.GetPlaca()}, Marca: {vehiculo.GetMarca()}, Modelo: {vehiculo.GetModelo()}, Hora de Entrada: {vehiculo.GetHoraEntrada()}")
+
+
+def main():
+    parqueadero = Parqueadero()
+    
+    while True:
+        print("\n--- Parqueadero ---")
+        print("1. Ingresar un vehículo")
+        print("2. Registrar la salida de un vehículo")
+        print("3. Consultar el estado del parqueadero")
+        print("4. Generar reporte del día")
+        print("5. Salir")
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == '1':
+            tipo = input("Tipo de vehículo (1: Camión, 2: Automóvil, 3: Motocicleta): ")
+            placa = input("Ingrese la placa: ")
+            marca = input("Ingrese la marca: ")
+            modelo = input("Ingrese el modelo: ")
+            hora_entrada = datetime.now()
+
+            try:
+                if tipo == '1':
+                    capacidad_carga = float(input("Ingrese la capacidad de carga: "))
+                    vehiculo = Camion(placa, marca, modelo, hora_entrada, capacidad_carga)
+                elif tipo == '2':
+                    tipo_combustible = input("Ingrese el tipo de combustible: ")
+                    vehiculo = Automovil(placa, marca, modelo, hora_entrada, tipo_combustible)
+                elif tipo == '3':
+                    cilindraje = int(input("Ingrese el cilindraje: "))
+                    vehiculo = Motocicleta(placa, marca, modelo, hora_entrada, cilindraje)
+                else:
+                    print("Tipo de vehículo no válido.")
+                    continue
+
+                parqueadero.RegistrarEntrada(vehiculo)
+            except ValueError as e:
+                print(f"Error de entrada: {e}")
+
+        elif opcion == '2':
+            placa = input("Ingrese la placa del vehículo que va a salir: ")
+            parqueadero.RegistrarSalida(placa)
+
+        elif opcion == '3':
+            parqueadero.ConsultarEstado()
+
+        elif opcion == '4':
+            parqueadero.GenerarReporte()
+
+        elif opcion == '5':
+            print("Saliendo del sistema.")
+            break
+
+        else:
+            print("Opción no válida. Intente de nuevo.")
+
+if __name__ == "__main__":
+    main()
